@@ -1,11 +1,17 @@
 const express = require("express");
 const axios = require("axios");
 const redis = require("redis");
+require('dotenv').config()
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 const requestUrl = "https://jsonplaceholder.typicode.com/posts";
+
+const parkingApiKey = process.env.API_KEY;
+const parkingTypename = process.env.API_TYPENAME;
+
+const parkingUrl = "https://data.bordeaux-metropole.fr/geojson?key="+parkingApiKey+"&typename="+parkingTypename
 
 
 //* configuring and creating redis client
@@ -29,16 +35,16 @@ app.get("/", async (req, res) => {
     //* getting data from the cache if cache is present for the given key
     const cachedData = await client.get(key);
     if (cachedData) {
-    console.log("!!! Cache Hit !!!");
+    console.log("Cache existing !!!");
     //* parsing data as data is saved in string format in redis
     return res.status(200).json(JSON.parse(cachedData));
     }
 
     //* fetching data from the requestUrl
     axios
-    .get(requestUrl)
+    .get(parkingUrl)
     .then((data) => {
-        console.log("cache miss");
+        console.log("Cache missing...");
         //* putting data in cache in string format
         client.set(key, JSON.stringify(data.data));
         console.log("Putting data in cache ...");
