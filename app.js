@@ -32,7 +32,7 @@ app.get("/redis-set/:id", (req, res) => {
     });
     
     
-    res.send("key " + id + " ajouté !");
+    res.send("new key #" + id + " ajoutée !");
     
 });
 
@@ -48,16 +48,21 @@ app.get("/redis-get/:id", (req, res) => {
           const cacheResults = await redisClient.get(id);
           if (cacheResults) {
             isCached = true;
-            results = cacheResults;
+              results = cacheResults;
+              res.send({
+                fromCache: isCached,
+                data: "existing key retrived : #" + id + " = " +results,
+              });
           } else {
             results = 'Date : ' + Date();
-            await redisClient.set(id, results)
+              await redisClient.set(id, results)
+              res.send({
+                fromCache: isCached,
+                data: "new key added : #" + id + " = " +results,
+              });
           }
       
-          res.send({
-            fromCache: isCached,
-            data: "key " + id + " = " +results,
-          });
+
         } catch (error) {
           console.log(error)
         }
