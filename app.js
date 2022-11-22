@@ -28,7 +28,7 @@ console.log("Connection made with Redis");
   }
 
 
-app.get("/", async (req, res) => {
+app.get("/parking-public", async (req, res) => {
     //* mapping redis key according to request url
     const key = req.url;
 
