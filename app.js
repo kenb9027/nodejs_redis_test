@@ -71,6 +71,9 @@ async function setData(key, datas) {
   }
 }
 
+/**
+ * GET ALL PARKINGS FROM API AND STORE THEM IN REDIS
+ */
 app.get("/parking-public", async (req, res) => {
     //* mapping redis key according to request url
   let key = req.url;
@@ -99,6 +102,10 @@ app.get("/parking-public", async (req, res) => {
         });
 });
 
+
+/**
+ * SET A REDIS KEY (test)
+ */
 app.get("/redis/set/:id", async (req, res) => {
   let id = req.params.id;
   console.log("set redis: " + id);
@@ -106,6 +113,9 @@ app.get("/redis/set/:id", async (req, res) => {
   res.send(data)
 });
 
+/**
+ * GET A REDIS KEY (test)
+ */
 app.get("/redis/get/:id", async (req, res) => {
   let id = req.params.id;
   console.log("get redis: " + id);
@@ -113,6 +123,9 @@ app.get("/redis/get/:id", async (req, res) => {
   res.send(data)
 });
 
+/**
+ * POST A NEW MESSAGE
+ */
 app.post("/message", async (req, res) => {
   //* get IDs & message from the body
   let senderId = req.body.id;
@@ -155,6 +168,9 @@ app.post("/message", async (req, res) => {
   }
 });
 
+/**
+ * GET ALL MESSAGES FOR A SENDER BY ID
+ */
 app.get("/messages/:id", async (req, res) => {
   let senderId = req.params.id;
 
