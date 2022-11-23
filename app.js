@@ -13,7 +13,6 @@ const messageRouter = require("./routes/message.router");
 const app = express();
 const port = process.env.PORT || 3000;
 
-
 app.use(cors({origin:'*'}));
 app.use(express.json()) // for parsing application/json
 app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
