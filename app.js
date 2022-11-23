@@ -114,32 +114,57 @@ app.get("/redis/get/:id", async (req, res) => {
 });
 
 app.post("/message", async (req, res) => {
-  // console.log(req.body);
-  let id = req.body.id;
+  //* get IDs & message from the body
+  let senderId = req.body.id;
+  let recipientId = req.body.recipient
   let message = req.body.message
-  let oldData = await getData(id);
-  // console.log("oldData : " + JSON.stringify(oldData))
-  let data;
-  let box = {
-    "date": new Date(),
-    "message" : message
-  }
-  if (oldData === null) {
-    data = await setData(id, "[" + JSON.stringify(box) + "]")
+  console.log(senderId);
+  console.log(recipientId);
+  console.log(message);
+  if (senderId === undefined || recipientId === undefined || message === undefined) {
+    let error = {
+      "Error" : "Aucun champs ne peut être vide.", 
+      "senderId" : senderId, 
+      "recipientId" : recipientId, 
+      "message" : message, 
+    }
+    res.send(error);
   }
   else {
-    let newData = oldData.slice(0 , -1) + " , " + JSON.stringify(box) + "]"
-    data = await setData(id, newData)
+    //* find if oldData exists
+    let oldData = await getData(senderId);
+    // console.log("oldData : " + JSON.stringify(oldData))
+    //* init data and messageBox
+    let data;
+    let box = {
+      "date": new Date(),
+      "message": message,
+      "recipient" : recipientId
+    }
+    //* if not exist , creating new one
+    if (oldData === null) {
+      data = await setData(senderId, "[" + JSON.stringify(box) + "]")
+    }
+    //* if not exist , concat with old data
+    else {
+      let newData = oldData.slice(0 , -1) + " , " + JSON.stringify(box) + "]"
+      data = await setData(senderId, newData)
+    }
+    res.send(data);
+    
   }
-  res.send(data);
 });
 
 app.get("/messages/:id", async (req, res) => {
-  let id = req.params.id;
+  let senderId = req.params.id;
 
-  let list = await getData(id);
-  console.log(list)
-  res.send(JSON.parse(list));
+  let list = await getData(senderId);
+  // console.log(list);
+  if (list === null ||  list.length === 0) {
+    res.send("Aucun messages pour le user #" + senderId)
+  } else {
+    res.send(JSON.parse(list));
+  }
 
 
 })
