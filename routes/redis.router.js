@@ -2,7 +2,7 @@ const express = require("express");
 
 const redisController = require("../controllers/redis.controller");
 
-require('dotenv').config();
+require("dotenv").config();
 
 const router = express.Router();
 

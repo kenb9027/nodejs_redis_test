@@ -32,7 +32,7 @@ exports.postMessage = async (req, res) => {
             date: new Date(),
             message: message,
             recipient: recipientId,
-            sender: senderId
+            sender: senderId,
         };
         //* if not exist , creating new one
         if (oldData === null) {
@@ -69,30 +69,27 @@ exports.getMessages = async (req, res) => {
  * GET A CONVERSATION BETWEEN 2 USERS , OLDER MESSAGE FIRST
  */
 exports.getConversation = async (req, res) => {
-    let messages = [];
-    let conv = [];
+    let conversation = [];
     let userOne = req.body.firstUserId;
     let userTwo = req.body.secondUserId;
     let userOneMess = await redis.getData(userOne);
     let userTwoMess = await redis.getData(userTwo);
 
-
     JSON.parse(userOneMess).forEach(async (msg) => {
         if (msg.recipient === userTwo) {
-            conv.push(msg);
+            conversation.push(msg);
         }
     });
 
-    JSON.parse(userTwoMess).forEach( async (msg) => {
+    JSON.parse(userTwoMess).forEach(async (msg) => {
         if (msg.recipient === userOne) {
-            conv.push(msg);
+            conversation.push(msg);
         }
     });
 
-    conv.sort((a,b)=>{
+    conversation.sort((a, b) => {
         return new Date(a.date) - new Date(b.date);
-    })
-
-    // console.log(conv);
-    res.send(conv);
+    });
+    // console.log(conversation);
+    res.send(conversation);
 };

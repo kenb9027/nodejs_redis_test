@@ -2,7 +2,6 @@ const axios = require("axios");
 require("dotenv").config();
 const redis = require("../utils/redis.utils");
 
-
 const parkingApiKey = process.env.API_KEY;
 const parkingTypename = process.env.API_TYPENAME;
 const parkingUrl =
@@ -14,10 +13,10 @@ const parkingUrl =
 /**
  * GET ALL PARKINGS FROM API AND STORE THEM IN REDIS
  */
- exports.getParkingPublic =  async (req, res) => {
-    //* mapping redis key according to request url
-  let key = req.url;
-  key = key.slice(1);
+exports.getParkingPublic = async (req, res) => {
+    //* mapping redis key according to request url , sliced first "/"
+    let key = req.url;
+    key = key.slice(1);
 
     //* getting data from the cache if cache is present for the given key
     const cachedData = await redis.getData(key);

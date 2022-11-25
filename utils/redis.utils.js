@@ -1,6 +1,5 @@
 const redis = require("redis");
 
-
 //* configuring and creating redis client
 const redisClient = redis.createClient({
     host: "127.0.0.1", //* Redis Host URL
@@ -13,18 +12,17 @@ exports.redisClient;
 exports.redisConnection = () => {
     redisClient.connect();
     console.log("Connection made with Redis");
-}
+};
 
 exports.redisDisconnect = () => {
     redisClient.disconnect();
-    console.log('Redis disconnected.');
-}
-
+    console.log("Redis disconnected.");
+};
 
 /**
  * GET REDIS DATA BY KEY
  * @param {string} key redis key to get
- * @returns 
+ * @returns
  */
 exports.getData = async (key) => {
     this.redisConnection();
@@ -33,27 +31,26 @@ exports.getData = async (key) => {
         if (results) {
             console.log("key exist !");
             this.redisDisconnect();
-          return results;
+            return results;
         } else {
             console.log("key don't exist.");
             this.redisDisconnect();
-          return null;
+            return null;
         }
     } catch (error) {
         console.log(error);
     }
-  }
-  
-  /**
-   * SET DATA IN REDIS
-   * @param {string} key 
-   * @param {string} datas 
-   * @returns 
-   */
+};
+
+/**
+ * SET DATA IN REDIS
+ * @param {string} key
+ * @param {string} datas
+ * @returns
+ */
 exports.setData = async (key, datas) => {
     this.redisConnection();
     try {
- 
         redisClient.set(key, datas, function (err, reply) {
             // console.log(reply); // OK
         });
@@ -64,5 +61,4 @@ exports.setData = async (key, datas) => {
         console.log(error);
         this.redisDisconnect();
     }
-  }
-  
+};
