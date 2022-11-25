@@ -1,6 +1,6 @@
 const redis = require("redis");
 
-//* configuring and creating redis client
+// configuring and creating redis client
 const redisClient = redis.createClient({
     host: "127.0.0.1", //* Redis Host URL
     port: 6379, //* Redis Host PORT number
@@ -8,12 +8,13 @@ const redisClient = redis.createClient({
 });
 exports.redisClient;
 
-//* connecting to the redis data store
+// connecting to the redis data store
 exports.redisConnection = () => {
     redisClient.connect();
     console.log("Connection made with Redis");
 };
 
+// disconnect Redis
 exports.redisDisconnect = () => {
     redisClient.disconnect();
     console.log("Redis disconnected.");

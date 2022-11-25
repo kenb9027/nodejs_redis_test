@@ -7,13 +7,11 @@ const { Op } = require("sequelize");
  * POST A NEW MESSAGE
  */
 exports.postMessage = async (req, res) => {
-    //* get IDs & message from the body
+    // get IDs & message from the body
     let senderId = req.body.id;
     let recipientId = req.body.recipient;
     let message = req.body.message;
-    // console.log(senderId);
-    // console.log(recipientId);
-    // console.log(message);
+
     if (
         senderId === undefined ||
         recipientId === undefined ||
@@ -27,9 +25,9 @@ exports.postMessage = async (req, res) => {
         };
         res.status(400).send(error);
     } else {
-        //* find if oldData exists
+        // find if oldData exists
         let oldData = await redis.getData(senderId);
-        //* init data and messageBox
+        // init data and messageBox
         let data;
         let box = {
             date: new Date(),
@@ -37,14 +35,14 @@ exports.postMessage = async (req, res) => {
             recipient: recipientId,
             sender: senderId,
         };
-        //* if not exist , creating new one
+        // if not exist , creating new one
         if (oldData === null) {
             data = await redis.setData(
                 senderId,
                 "[" + JSON.stringify(box) + "]"
             );
         }
-        //* if not exist , concat with old data
+        // if not exist , concat with old data
         else {
             let newData =
                 oldData.slice(0, -1) + " , " + JSON.stringify(box) + "]";
@@ -78,18 +76,19 @@ exports.getConversation = async (req, res) => {
     let userOneMess = await redis.getData(userOne);
     let userTwoMess = await redis.getData(userTwo);
 
+    //add messages to conversation for each user
     JSON.parse(userOneMess).forEach(async (msg) => {
         if (msg.recipient === userTwo) {
             conversation.push(msg);
         }
     });
-
     JSON.parse(userTwoMess).forEach(async (msg) => {
         if (msg.recipient === userOne) {
             conversation.push(msg);
         }
     });
 
+    //sort by date 
     conversation.sort((a, b) => {
         return new Date(a.date) - new Date(b.date);
     });
