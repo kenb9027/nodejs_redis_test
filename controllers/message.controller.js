@@ -1,5 +1,8 @@
 const redis = require("../utils/redis.utils");
 
+const Conversation = require("../models").Conversation;
+const { Op } = require("sequelize");
+
 /**
  * POST A NEW MESSAGE
  */
@@ -90,6 +93,20 @@ exports.getConversation = async (req, res) => {
     conversation.sort((a, b) => {
         return new Date(a.date) - new Date(b.date);
     });
-    // console.log(conversation);
-    res.status(200).send(conversation);
+
+    // SAVE IN DB
+    let db_conversation = {
+        userOne: userOne,
+        userTwo: userTwo,
+        content: JSON.stringify(conversation),
+    };
+    Conversation.create(db_conversation)
+        .then((result) => {
+            res.status(201).send(result);
+        })
+        .catch((err) => {
+            console.log(err)
+            res.status(500).send("Some error occured.");
+        });
+
 };
