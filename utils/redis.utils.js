@@ -50,7 +50,7 @@ exports.redisConnection = () => {
         // }
   
         redisClient.set(key, datas, function (err, reply) {
-            console.log(reply); // OK
+            // console.log(reply); // OK
         });
         let data = await redisClient.get(key);
         return data;

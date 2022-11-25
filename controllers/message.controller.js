@@ -8,9 +8,9 @@ exports.postMessage = async (req, res) => {
     let senderId = req.body.id;
     let recipientId = req.body.recipient;
     let message = req.body.message;
-    console.log(senderId);
-    console.log(recipientId);
-    console.log(message);
+    // console.log(senderId);
+    // console.log(recipientId);
+    // console.log(message);
     if (
         senderId === undefined ||
         recipientId === undefined ||
@@ -26,7 +26,6 @@ exports.postMessage = async (req, res) => {
     } else {
         //* find if oldData exists
         let oldData = await redis.getData(senderId);
-        // console.log("oldData : " + JSON.stringify(oldData))
         //* init data and messageBox
         let data;
         let box = {
@@ -59,7 +58,6 @@ exports.getMessages = async (req, res) => {
     let senderId = req.params.id;
 
     let list = await redis.getData(senderId);
-    // console.log(list);
     if (list === null || list.length === 0) {
         res.send("Aucun messages pour le user #" + senderId);
     } else {
@@ -95,7 +93,6 @@ exports.getConversation = async (req, res) => {
         return new Date(a.date) - new Date(b.date);
     })
 
-    console.log(conv);
-
+    // console.log(conv);
     res.send(conv);
 };
