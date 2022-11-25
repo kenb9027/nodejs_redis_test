@@ -7,7 +7,7 @@ exports.setRedis = async (req, res) => {
     let id = req.params.id;
     console.log("set redis: " + id);
     let data = await redis.setData(id, "Date : " + Date());
-    res.send(data);
+    res.status(200).send(data);
 };
 
 /**
@@ -17,5 +17,5 @@ exports.getRedis = async (req, res) => {
     let id = req.params.id;
     console.log("get redis: " + id);
     let data = await redis.getData(id);
-    res.send(data);
+    res.status(200).send(data);
 };

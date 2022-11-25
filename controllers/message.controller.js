@@ -22,7 +22,7 @@ exports.postMessage = async (req, res) => {
             recipientId: recipientId,
             message: message,
         };
-        res.send(error);
+        res.status(400).send(error);
     } else {
         //* find if oldData exists
         let oldData = await redis.getData(senderId);
@@ -47,7 +47,7 @@ exports.postMessage = async (req, res) => {
                 oldData.slice(0, -1) + " , " + JSON.stringify(box) + "]";
             data = await redis.setData(senderId, newData);
         }
-        res.send(data);
+        res.status(201).send(data);
     }
 };
 
@@ -59,9 +59,9 @@ exports.getMessages = async (req, res) => {
 
     let list = await redis.getData(senderId);
     if (list === null || list.length === 0) {
-        res.send("Aucun messages pour le user #" + senderId);
+        res.status(202).send("Aucun messages pour le user #" + senderId);
     } else {
-        res.send(JSON.parse(list));
+        res.status(200).send(JSON.parse(list));
     }
 };
 
@@ -91,5 +91,5 @@ exports.getConversation = async (req, res) => {
         return new Date(a.date) - new Date(b.date);
     });
     // console.log(conversation);
-    res.send(conversation);
+    res.status(200).send(conversation);
 };
