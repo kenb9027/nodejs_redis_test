@@ -1,8 +1,6 @@
 const redis = require("../utils/redis.utils");
-
 const Conversation = require("../models").Conversation;
 const { Op } = require("sequelize");
-
 /**
  * POST A NEW MESSAGE
  */
@@ -76,18 +74,24 @@ exports.getConversation = async (req, res) => {
     let userOneMess = await redis.getData(userOne);
     let userTwoMess = await redis.getData(userTwo);
 
+    if (userOneMess == null || userTwoMess == null) {
+       console.log("One of the user have no message.");
+    }
     //add messages to conversation for each user
-    JSON.parse(userOneMess).forEach(async (msg) => {
-        if (msg.recipient === userTwo) {
-            conversation.push(msg);
-        }
-    });
-    JSON.parse(userTwoMess).forEach(async (msg) => {
-        if (msg.recipient === userOne) {
-            conversation.push(msg);
-        }
-    });
-
+    if (userOneMess != null ) {
+        JSON.parse(userOneMess).forEach(async (msg) => {
+            if (msg.recipient === userTwo) {
+                conversation.push(msg);
+            }
+        });
+    }
+    if (userOneMess != null) {
+        JSON.parse(userTwoMess).forEach(async (msg) => {
+            if (msg.recipient === userOne) {
+                conversation.push(msg);
+            }
+        });
+    }
     //sort by date 
     conversation.sort((a, b) => {
         return new Date(a.date) - new Date(b.date);
@@ -99,13 +103,42 @@ exports.getConversation = async (req, res) => {
         userTwo: userTwo,
         content: JSON.stringify(conversation),
     };
+
+    //TODO: compare to db before save
+    //find if exist
+    // Conversation.findAll({
+    //     where: {
+    //         [Op.or]: [
+    //           { userOne: userOne },
+    //           { userOne: userTwo }
+    //         ],
+    //         [Op.or]: [
+    //             { userTwo: userOne },
+    //             { userTwo: userTwo }
+    //           ],
+
+    //       }
+    // })
+    // .then((data) => {
+    //     const conversationDb = data.map((convDb) => {
+    //         return convDb;
+    //     });
+    //     console.log(conversationDb)
+    //     res.status(200).send(
+    //             conversationDb
+    //     );
+    // })
+    // .catch((err) => {
+    //     console.log(err)
+    // });
+
     Conversation.create(db_conversation)
         .then((result) => {
             res.status(201).send(result);
         })
         .catch((err) => {
             console.log(err)
-            res.status(500).send("Some error occured.");
+            res.status(500).send("Some error occured. Conversation were not created.");
         });
 
 };
